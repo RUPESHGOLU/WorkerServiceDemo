@@ -34,7 +34,7 @@ namespace WorkerServiceDemo
             try
             {
                 var client = new MongoClient(_config.ConnectionString);
-                var filter = Builders<UserDetail>.Filter.Lte(PurgeOldDataConstants.CreatedTimeStamp, DateTime.UtcNow.AddDays(-90));
+                var filter = Builders<UserDetail>.Filter.Lte(PurgeOldDataConstants.CreatedTimeStamp, DateTime.UtcNow.AddDays(-_config.NoOfDays));
                 var db = client.GetDatabase(_config.ClientDatabase);
                 var liveCollection = db.GetCollection<UserDetail>(_config.LiveCollection);
                 var filteredQuery = await liveCollection.FindAsync(filter).ConfigureAwait(false);

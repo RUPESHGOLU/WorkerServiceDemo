@@ -12,5 +12,6 @@ namespace WorkerServiceDemo.Models
         public string? HistoryCollection { get; set; }
         public string? LiveCollection { get; set; }
         public string? ConnectionString { get; set; }
+        public int NoOfDays { get; set; }
     }
 }
