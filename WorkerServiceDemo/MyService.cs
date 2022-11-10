@@ -6,15 +6,21 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using WorkerServiceDemo.Models;
 
 namespace WorkerServiceDemo
 {
     internal class MyService : IHostedService
     {
-        private Timer _timer = null;
+        private Timer? _timer = null;
+        private readonly MongoDBConfig _config;
+        public MyService(MongoDBConfig mongoDBConfig)
+        {
+            _config = mongoDBConfig;
+        }
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(CopyCollection, null, TimeSpan.Zero, TimeSpan.FromMinutes(10));
+            _timer = new Timer(CopyCollection, null, TimeSpan.Zero, TimeSpan.FromMinutes(2));
             return Task.CompletedTask;
         }
 
@@ -25,17 +31,26 @@ namespace WorkerServiceDemo
 
         private async void CopyCollection(object? state)
         {
-            var connectionString = "mongodb://localhost:27017"; 
-            var client = new MongoClient(connectionString);
-            var filter = Builders<BsonDocument>.Filter.Eq("prep_time", 10);
-            var db = client.GetDatabase("cooker");
-            var liveCollection = db.GetCollection<BsonDocument>("recipes"); 
-            var filteredQuery = await liveCollection.FindAsync(filter).ConfigureAwait(false);
-            var result = filteredQuery.ToList();
-            var historyCollection = db.GetCollection<BsonDocument>("recipesOld");
-            historyCollection.InsertMany(result);
-            //var deleteFilter = Builders<BsonDocument>.Filter.In("_id", result.Select(i => i._id));
-            await liveCollection.DeleteManyAsync(filter);
+            try
+            {
+                var client = new MongoClient(_config.ConnectionString);
+                var filter = Builders<UserDetail>.Filter.Lte(PurgeOldDataConstants.CreatedTimeStamp, DateTime.UtcNow.AddDays(-90));
+                var db = client.GetDatabase(_config.ClientDatabase);
+                var liveCollection = db.GetCollection<UserDetail>(_config.LiveCollection);
+                var filteredQuery = await liveCollection.FindAsync(filter).ConfigureAwait(false);
+                var result = filteredQuery.ToList();
+                if (result.Count() > 0)
+                {
+                    var historyCollection = db.GetCollection<HistUserDetail>(_config.HistoryCollection);
+                    historyCollection.InsertMany(result.Select(s => new HistUserDetail { Name = s.Name, City = s.City, CreatedTimeStamp = s.CreatedTimeStamp }));
+                    await liveCollection.DeleteManyAsync(filter);
+
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
         //protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         //{
