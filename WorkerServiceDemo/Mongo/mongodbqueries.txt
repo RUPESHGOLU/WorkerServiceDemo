@@ -1,0 +1,17 @@
+db.recipes.find({title:"Tacos"})---where title = 'tacos'
+db.recipes.find({title:"Tacos",cook_time:270})----multiple where condition
+db.recipes.find({title:"Tacos"},{title:1})--select title from recipes where title='tacos'  
+
+doc = {"title" :"Tacos", "desc": "yummie tacos", cook_time: 20};
+db.tacos.insertOne(doc)
+
+db.recipes.find({},{title:1}) ---select title from recipes
+
+db.Collection1.insertOne({})  to create collection
+db.recipes.find({},{title:1}).sort({title:-1}).limit(3)
+
+
+doc = {"Name": "Rupesh Mishra","City": "Siwan","CreatedTimeStamp": new ISODate("2022-05-06T04:00:00.000+00:00")};
+doc1 = {"Name": "Shivam Mishra","City": "Patna","CreatedTimeStamp": new ISODate("2022-08-06T04:00:00.000+00:00")};
+doc2 = {"Name": "Rahul Singh","City": "Delhi","CreatedTimeStamp": new ISODate("2022-10-06T04:00:00.000+00:00")};
+db.UserDetail.insertMany([doc,doc1,doc2])

@@ -7,20 +7,7 @@
     <UserSecretsId>dotnet-WorkerServiceDemo-A9CBF17F-EA0F-40C2-8FA4-11A4CF2199FF</UserSecretsId>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="JobFactory\**" />
-    <Compile Remove="Jobs\**" />
-    <Compile Remove="Schedular\**" />
-    <Content Remove="JobFactory\**" />
-    <Content Remove="Jobs\**" />
-    <Content Remove="Schedular\**" />
-    <EmbeddedResource Remove="JobFactory\**" />
-    <EmbeddedResource Remove="Jobs\**" />
-    <EmbeddedResource Remove="Schedular\**" />
-    <None Remove="JobFactory\**" />
-    <None Remove="Jobs\**" />
-    <None Remove="Schedular\**" />
-  </ItemGroup>
+  
 
   <ItemGroup>
     <Compile Remove="Worker.cs" />
@@ -29,7 +16,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
-    <PackageReference Include="Quartz" Version="3.5.0" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1development_1json__JsonSchema="https://citation-file-format.github.io/1.2.0/schema.json" /></VisualStudio></ProjectExtensions>
